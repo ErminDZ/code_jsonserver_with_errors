@@ -54,7 +54,7 @@ if (!fs.existsSync(path.join(__dirname, DB))) {
   console.log(chalk.bold("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"));
   console.log(chalk.red(`File ${DB} was not found, must be present in the ROOT of this project`));
   if (DB === "users.json") {
-    console.log(chalk.gray("You can find a copy here: https://github.com/Cphdat3sem2018f/week6_javascript-2/blob/master/code/users.json"))
+    console.log(chalk.gray("Create this file in the root of the project and copy ALL content from the file 'users_org.json' into the file"))
   }
   console.log(chalk.bold("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"));
   process.exit(0);
