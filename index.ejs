@@ -6,10 +6,15 @@
   <link href="main.css" rel="stylesheet">
 </head>
 <style>
+  h4 {
+    margin-bottom: 10px;
+    margin-top: 10px;
+  }
 
-  h4  {margin-bottom: 10px;margin-top: 10px;}
-  p {margin-bottom: 4px;margin-top: 4px;}
- 
+  p {
+    margin-bottom: 4px;
+    margin-top: 4px;
+  }
 </style>
 
 <body>
@@ -28,8 +33,9 @@
 
       <h4>Important!</h4>
       <p>
-        This is a <em>specialized version of <a href="https://github.com/typicode/json-server">json-server</a></em>, created solely as a server
-        meant for exercises at cphbusiness.dk - computer science 3. semester
+        This is a <em>specialized version of <a href="https://github.com/typicode/json-server">json-server</a></em>,
+        created solely as a server
+        meant for exercises at kea.dk - computer science 3. semester
       </p>
       <h4>What's different</h4>
       <ul style="margin-top: 0px;">
@@ -38,11 +44,12 @@
         <li>- It's hard-coded to provide rules for new Users. Rules used before storing new Users:
           <ul>
             <% for(r in rules) {%>
-            <li><b style="margin-right:5px;">
-                <%= r %></b>
-              <%= JSON.stringify(rules[r]) %>
-            </li>
-            <% } %>
+              <li><b style="margin-right:5px;">
+                  <%= r %>
+                </b>
+                <%= JSON.stringify(rules[r]) %>
+              </li>
+              <% } %>
           </ul>
         </li>
       </ul>
@@ -56,7 +63,9 @@
         </code>
       </p>
       <h4>Resources</h4>
-      <a href="<%= url %>"> <%= resourse %> </a>
+      <a href="<%= url %>">
+        <%= resourse %>
+      </a>
 
       <p>
         To access and modify resources, you can use any HTTP method
