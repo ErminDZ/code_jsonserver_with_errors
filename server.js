@@ -1,11 +1,11 @@
-const jsonServer = require('json-server')
-const server = jsonServer.create()
-const middlewares = jsonServer.defaults()
+const jsonServer = require("json-server");
+const server = jsonServer.create();
+const middlewares = jsonServer.defaults();
 const validator = require("email-validator");
-const chalk = require('chalk');
+const chalk = require("chalk");
 
 let args = process.argv.slice(2);
-const PORT = 3333
+const PORT = 3335;
 
 /*
 Legal options:
@@ -17,70 +17,80 @@ const opts = args.reduce((acc, curVal) => {
   const parts = curVal.split("=");
   acc[parts[0]] = parts[1];
   return acc;
-}, {})
+}, {});
 
 const DB = opts.db || "users.json";
 let ROUTE = DB.split(".")[0];
-ROUTE = "route" ? "/api/users" : ROUTE
+ROUTE = "route" ? "/api/users" : ROUTE;
 
-console.log(`DB: ${DB}, ROUTE: ${ROUTE}`)
+console.log(`DB: ${DB}, ROUTE: ${ROUTE}`);
 
-var bodyParser = require('body-parser');
+var bodyParser = require("body-parser");
 server.use(bodyParser.json()); // for parsing application/json
-server.set("view engine", "ejs")
+server.set("view engine", "ejs");
 
 const rules = require("./users_rules").users;
-server.get("/", (req, res, next) => res.render(path.join(__dirname, "index.ejs"), 
-{ rules,url:"http://localhost:"+PORT+ROUTE, resourse: ROUTE }));
-
+server.get("/", (req, res, next) =>
+  res.render(path.join(__dirname, "index.ejs"), {
+    rules,
+    url: "http://localhost:" + PORT + ROUTE,
+    resourse: ROUTE,
+  })
+);
 
 let = cors = opts.cors;
 cors = typeof cors === "undefined" ? true : cors;
 
-if (cors===true) {
-  server.use(middlewares)
+if (cors === true) {
+  server.use(middlewares);
 } else {
-  const noCors = middlewares.filter(f => 
-  { 
-    return f.name != "corsMiddleware"
-  })
-  console.log("CORS HEADERS DISABLED")
-  server.use(noCors)
+  const noCors = middlewares.filter((f) => {
+    return f.name != "corsMiddleware";
+  });
+  console.log("CORS HEADERS DISABLED");
+  server.use(noCors);
 }
 
-var fs = require('fs');
-var path = require('path');
+var fs = require("fs");
+var path = require("path");
 if (!fs.existsSync(path.join(__dirname, DB))) {
   console.log(chalk.bold("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"));
-  console.log(chalk.red(`File ${DB} was not found, must be present in the ROOT of this project`));
+  console.log(
+    chalk.red(
+      `File ${DB} was not found, must be present in the ROOT of this project`
+    )
+  );
   if (DB === "users.json") {
-    console.log(chalk.gray("Create this file in the root of the project and copy ALL content from the file 'users_org.json' into the file"))
+    console.log(
+      chalk.gray(
+        "Create this file in the root of the project and copy ALL content from the file 'users_org.json' into the file"
+      )
+    );
   }
   console.log(chalk.bold("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"));
   process.exit(0);
 }
 
 //Handle URL that starts with /api/
-server.use((req,res,next)=>{
-  console.log("URL: "+req.url);
-  if(req.url.startsWith("/users")){
-    console.log("404")
+server.use((req, res, next) => {
+  console.log("URL: " + req.url);
+  if (req.url.startsWith("/users")) {
+    console.log("404");
     return res.status(400).json({
       status: res.statusCode,
-      msg: "No content found for this request"
-    })
+      msg: "No content found for this request",
+    });
   }
-  if(req.url.startsWith("/api/users")){
-      req.url = req.url.substring(4,req.url.length);
+  if (req.url.startsWith("/api/users")) {
+    req.url = req.url.substring(4, req.url.length);
   }
   next();
-})
+});
 
 const router = jsonServer.router(DB);
 
-
 const REQUESTS_BETWEEN_FAILS = isNaN(opts.fail) ? -1 : Number(opts.fail);
-console.log("REQUESTS_BETWEEN_FAILS",REQUESTS_BETWEEN_FAILS)
+console.log("REQUESTS_BETWEEN_FAILS", REQUESTS_BETWEEN_FAILS);
 
 //Simulate a server fault
 server.use((req, res, next) => {
@@ -90,21 +100,25 @@ server.use((req, res, next) => {
       //Simulate a server fault
       return res.status(500).json({
         status: 500,
-        msg: "You are using a server, hardcoded to create temporary errors - Life Sucks ;-)"
-      })
+        msg: "You are using a server, hardcoded to create temporary errors - Life Sucks ;-)",
+      });
     }
   }
   next();
-})
-
+});
 
 //Check incomming request before adding to the "database"
 server.use((req, res, next) => {
-
-  if ((req.method === "POST" || req.method === "PUT") && req.url.startsWith("/users")) {
+  if (
+    (req.method === "POST" || req.method === "PUT") &&
+    req.url.startsWith("/users")
+  ) {
     const body = req.body;
     if (!body || JSON.stringify(body) === "{}") {
-      return res.json({ status: 400, msg: "No content included with this request" })
+      return res.json({
+        status: 400,
+        msg: "No content included with this request",
+      });
     }
     let msg = [];
 
@@ -122,50 +136,46 @@ server.use((req, res, next) => {
     }
 
     if (msg.length > 0) {
-      return res.status(400).json({ status: 400, msg: msg.join(", ") })
+      return res.status(400).json({ status: 400, msg: msg.join(", ") });
     }
   }
   next();
-})
-
-
+});
 
 server.use(router);
-
-
-
 
 router.render = function (req, res) {
   if (req.method === "GET" || req.method === "PUT") {
     if (!req.body) {
-      return res.status(400).json({ statusCode: 400, msg: "No data included for this request" })
+      return res
+        .status(400)
+        .json({ statusCode: 400, msg: "No data included for this request" });
     }
   }
   if (res.statusCode === 404) {
     res.status(res.statusCode).json({
       status: res.statusCode,
-      msg: "No content found for this request"
-    })
+      msg: "No content found for this request",
+    });
   } else {
-    res.json(res.locals.data)
+    res.json(res.locals.data);
   }
-}
+};
 
 server.listen(PORT, () => {
-  console.log(chalk.cyan('  \\{^_^}/ hi!'))
-  console.log('');
-  console.log("Database file " + chalk.blue(DB) + " is loaded")
-  console.log(`Modified JSON Server is running on port ${PORT}`)
+  console.log(chalk.cyan("  \\{^_^}/ hi!"));
+  console.log("");
+  console.log("Database file " + chalk.blue(DB) + " is loaded");
+  console.log(`Modified JSON Server is running on port ${PORT}`);
   console.log(chalk("CORS: ") + cors);
   console.log();
   if (REQUESTS_BETWEEN_FAILS >= 0) {
-    console.log(chalk.red("This mode will produce random http-500 errors"))
-    console.log()
+    console.log(chalk.red("This mode will produce random http-500 errors"));
+    console.log();
   }
-  console.log(chalk.bold("Resources"))
+  console.log(chalk.bold("Resources"));
   console.log(`http://localhost:${PORT}${ROUTE}`);
-  console.log()
+  console.log();
   console.log(chalk.bold("Home"));
   console.log(`http://localhost:${PORT}`);
-
-})
+});

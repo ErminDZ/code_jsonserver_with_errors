@@ -1,0 +1,60 @@
+POST http://localhost:3335/api/users/
+Content-Type : application/json
+Accept: application/json
+
+{
+    "age": 23,
+    "name": "Peter Pan",
+    "gender": "male",
+    "email": "peters@pan.com"
+}
+
+###
+GET http://localhost:3335/api/users/
+
+###
+PUT http://localhost:3335/api/users/
+Content-Type : application/json
+Accept: application/json
+
+ {
+ "age": 23,
+ "name": "Peter Pan",
+ "gender": "male",
+ "email": "peters@pan.com"
+ }
+// Same user as above, but age = 2. Observe the response (and status code)
+//{ 
+//  "status": 400,
+//  "msg": "Age must be >= 3 and <= 99"
+//}
+
+// Same user as above, but name=”ib” Observe the response (and status code)
+//{
+//  "status": 400,
+//  "msg": "Name must include at least 2 characters"
+//}
+
+// Same user as above, but gender =”mand” Observe the response (and status code)
+//{
+//  "status": 400,
+//  "msg": "Gender must contain 'male' or 'female' "
+//}
+
+//Same user as above, but an illegal email.Observe the response (and status code)
+//{
+//  "status": 400,
+//  "msg": "Not a valid email"
+//}
+
+###
+PUT http://localhost:3335/api/users/115
+Content-Type : application/json
+Accept: application/json
+
+{
+ "age": 23,
+ "name": "Lars Henrik",
+ "gender": "male",
+ "email": "peters@pan.com"
+ }
